@@ -29,14 +29,25 @@ class BaseModel():
         __str__: should print: [<class name>] (<self.id>) <self.__dict__>
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         __init__ Method sets public-instance attribiutes
         """
 
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if not kwargs:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
+        else:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    if key == "created_at" or key == "updated_at":
+                        form = "%Y-%m-%dT%H:%M:%S.%f"
+                        setattr(self, key, datetime.strptime(value, form))
+                    elif key == "id":
+                        setattr(self, key, str(value))
+                    else:
+                        setattr(self, key, value)
 
     def to_dict(self):
         """
