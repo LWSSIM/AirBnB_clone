@@ -41,8 +41,6 @@ This also is a guide to various aspects of Python development, covering topics s
 
 - The `$ console` will be a tool to validate this storage engine.
 
-![framework](https://s3.amazonaws.com/alx-intranet.hbtn.io/uploads/medias/2018/6/815046647d23428a14ca.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARDDGGGOUSBVO6H7D%2F20240109%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240109T131925Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=09593105b358b7da01d6de8f941a8bc34008b12bddff76b53e20a2fc664d9447) 
-
 ---
 
 ## Files and Dirs
