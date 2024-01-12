@@ -12,6 +12,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 from models import storage
+import os
 import re
 
 
@@ -21,7 +22,15 @@ class HBNBCommand(cmd.Cmd):
         supports interactive and non-inter modes.
     """
     intro = """Welcome to the AirBnB CLI tool.
-    ---Type help or ? to list commands.\n"""
+    ---Type help or ? to list commands.\n
+    \n***Additional command format support:
+        Format:
+            <cls>.<cmd>(<potential args>)
+
+        Ex:
+            User.all()
+            User.update("-id-", "name", "value")
+    """
     ruler = "*"
     prompt = "(hbnb) "
     classes = {"BaseModel": BaseModel,
@@ -55,6 +64,10 @@ class HBNBCommand(cmd.Cmd):
     def help_quit(self):
         print("\nType 'quit' to exit")
         print("---You can also press <C-d>\n")
+
+    def do_clear(self, args):
+        """Clear command similar to clear from shell"""
+        os.system('clear')
 
     def do_create(self, args):
         """Creates a new instance of <class>,
@@ -211,6 +224,34 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an instance based on the class name and id")
         print("Ex: $ update BaseModel 1234-1234-1234 " +
               """email "aibnb@mail.com"\n""")
+
+    def precmd(self, line):
+        """(precmd)
+        special commands format support:
+
+        Fomrat:
+            <cls>.<cmd>(<potential args>)
+        """
+        l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
+        if not l_match:
+            return line
+        else:
+            l_match = list(l_match.groups())
+            _cmd, _cls, _args = l_match[1], l_match[0], l_match[2]
+            if (
+                len(l_match) <= 3 and
+                len(l_match) > 1 and
+                type(_args) is str and
+                _cmd != "update"
+            ):
+                return f"{_cmd} {_cls} {_args}"
+            else:
+                _args = _args.replace(",", "")
+                _args = _args.split(" ")
+                return (
+                    f"{_cmd} {_cls} {_args[0][1:-1]} "
+                    f"{_args[1][1:-1]} {_args[2]}"
+                )
 
 
 if __name__ == '__main__':
