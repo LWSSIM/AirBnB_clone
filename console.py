@@ -23,13 +23,6 @@ class HBNBCommand(cmd.Cmd):
     """
     intro = """Welcome to the AirBnB CLI tool.
     ---Type help or ? to list commands.\n
-    \n***Additional command format support:
-        Format:
-            <cls>.<cmd>(<potential args>)
-
-        Ex:
-            User.all()
-            User.update("-id-", "name", "value")
     """
     ruler = "*"
     prompt = "(hbnb) "
@@ -65,6 +58,49 @@ class HBNBCommand(cmd.Cmd):
         print("\nType 'quit' to exit")
         print("---You can also press <C-d>\n")
 
+    def precmd(self, line):
+        """(precmd)
+        special commands format support:
+
+        Fomrat:
+            <cls>.<cmd>(<potential args>)
+        """
+        l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
+        if not l_match:
+            return line
+        else:
+            l_match = list(l_match.groups())
+            _cmd, _cls, _args = l_match[1], l_match[0], l_match[2]
+
+            # if l_match[1] == "count":
+            #   return f"{_cmd} {_cls}"
+            if (
+                len(l_match) <= 3 and
+                len(l_match) > 1 and
+                type(_args) is str and
+                _cmd != "update"
+            ):
+                return f"{_cmd} {_cls} {_args}"
+            else:
+                _args = _args.replace(",", "")
+                _args = _args.split(" ")
+                return (
+                    f"{_cmd} {_cls} {_args[0][1:-1]} "
+                    f"{_args[1][1:-1]} {_args[2]}"
+                )
+
+    def help_precmd(self):
+        print("""\n***Special command Sformat support:
+        Format:
+            <cls>.<cmd>(<potential args>)
+
+        Ex:
+            User.all()
+            User.update("-id-", "name", "value")
+
+        Type: '? <cmd>' for supported Sformat
+        """)
+
     def do_clear(self, args):
         """Clear command similar to clear from shell"""
         os.system('clear')
@@ -89,6 +125,8 @@ class HBNBCommand(cmd.Cmd):
         print("\n[Usage]: create <className>\n")
         print("Creates a class of any type")
         print("Ex: $ create BaseModel\n")
+        print("""Sformat:
+        <class name>.show(<id>)""")
 
     def do_show(self, args):
         """Prints the string representation of an instance
@@ -112,7 +150,8 @@ class HBNBCommand(cmd.Cmd):
         session = storage.all()
         key = f"{name}.{id}"
         try:
-            print(session[key])
+            print()
+            print(session[key], end='\n\n')
         except KeyError:
             print("** no instance found **")
 
@@ -120,6 +159,8 @@ class HBNBCommand(cmd.Cmd):
         print("\n[Usage]: show <className> <id>\n")
         print("Show the 'str' representation of an instance")
         print("""Ex: $ show BaseModel 1234-1234-1234\n""")
+        print("""Sformat:
+        <class name>.show(<id>)""")
 
     def do_destroy(self, args):
         """Deletes an instance based on the class name
@@ -152,6 +193,8 @@ class HBNBCommand(cmd.Cmd):
         print("\n[Usage]: destroy <className> <id>\n")
         print("Deletes an existing instance")
         print("Ex: $ destroy BaseModel 1234-1234-1234\n")
+        print("""Sformat:
+        <class name>.destroy(<id>)""")
 
     def do_all(self, args):
         """Prints all string representation of all instances
@@ -170,12 +213,36 @@ class HBNBCommand(cmd.Cmd):
         else:
             for key, val in storage._FileStorage__objects.items():
                 str_rep.append(str(val))
-        print(str_rep)
+        print()
+        print(str_rep, end='\n\n')
 
     def help_all(self):
         print("\n[Usage]: all [<className>]\n")
         print("Prints all instances string representations")
         print("Ex: $ all BaseModel or $ all\n")
+        print("""Sformat:
+        <class name>.all()""")
+
+    def do_count(self, line):
+        """retrieve the number of instances of a class
+            Ex:
+                <class name>.count()
+        """
+        if line not in self.classes:
+            print("** class doesn't exist **")
+            return
+
+        session = storage.all()
+        i = 0
+        for instance in session:
+            if (session[instance].to_dict()["__class__"] == line):
+                i += 1
+        print(i)
+
+    def help_count(self):
+        print("""Retrieve the number of instances of a class
+        \n[Usage]: <class name>.count()
+        """)
 
     def do_update(self, line):
         """Updates an instance based on the class name and id
@@ -224,34 +291,10 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an instance based on the class name and id")
         print("Ex: $ update BaseModel 1234-1234-1234 " +
               """email "aibnb@mail.com"\n""")
-
-    def precmd(self, line):
-        """(precmd)
-        special commands format support:
-
-        Fomrat:
-            <cls>.<cmd>(<potential args>)
-        """
-        l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
-        if not l_match:
-            return line
-        else:
-            l_match = list(l_match.groups())
-            _cmd, _cls, _args = l_match[1], l_match[0], l_match[2]
-            if (
-                len(l_match) <= 3 and
-                len(l_match) > 1 and
-                type(_args) is str and
-                _cmd != "update"
-            ):
-                return f"{_cmd} {_cls} {_args}"
-            else:
-                _args = _args.replace(",", "")
-                _args = _args.split(" ")
-                return (
-                    f"{_cmd} {_cls} {_args[0][1:-1]} "
-                    f"{_args[1][1:-1]} {_args[2]}"
-                )
+        print("""Sformat:
+        <class name>.update(<id>, <attribute name>, <attribute value>)
+        --or--
+        <class name>.update(<id>, <dictionary representation>)""")
 
 
 if __name__ == '__main__':
