@@ -27,7 +27,7 @@ class FileStorage:
             (only if the JSON file (__file_path) exists)
     """
 
-    __file_path = "file.json"
+    __file_path = "AirBnB_Storage.json"
     __objects = {}
 
     def all(self):
