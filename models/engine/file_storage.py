@@ -4,6 +4,7 @@ The main Storage engine for files, .JSON format
 """
 
 from models.base_model import BaseModel
+from models.user import User
 import json
 
 

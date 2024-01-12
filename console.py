@@ -5,6 +5,7 @@
 
 import cmd
 from models.base_model import BaseModel
+from models.user import User
 import re
 from models import storage
 
@@ -18,38 +19,8 @@ class HBNBCommand(cmd.Cmd):
     ---Type help or ? to list commands.\n"""
     ruler = "*"
     prompt = "(hbnb) "
-    classes = {"BaseModel": BaseModel}
-
-    def precmd(self, line):
-        """Preprocess the input line before execution."""
-
-        if '.' not in line or '(' not in line or ')' not in line:
-            return line
-
-        try:
-            _cls, rest = line.split('.', 1)
-            _cmd, args = rest.split('(', 1)
-            _cmd = _cmd.strip()
-            args = args.rstrip(')').strip()
-
-            if _cmd not in self.classes:
-                raise Exception(f"Invalid command: {_cmd}")
-
-            _id, _args = (args.split(', ', 1) + ['', ''])[:2]
-            _id = _id.replace('\"', '')
-
-            if _args and _args[0] == '{' and _args[-1] == '}'\
-                    and type(eval(_args)) is dict:
-                pass
-            else:
-                _args = _args.replace(',', '')
-
-            nline = ' '.join([_cmd, _cls, _id, _args])
-
-        except Exception as e:
-            print(f"Error in parsing: {e}")
-
-        return nline
+    classes = {"BaseModel": BaseModel,
+               "User": User}
 
     def emptyline(self):
         """Ignore emptyline inputs
