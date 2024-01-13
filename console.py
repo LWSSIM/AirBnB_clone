@@ -22,7 +22,7 @@ class HBNBCommand(cmd.Cmd):
         supports interactive and non-inter modes.
     """
     intro = """Welcome to the AirBnB CLI tool.
-    ---Type help or ? to list commands.\n
+    ---Type help or ? to list commands.
     """
     ruler = "*"
     prompt = "(hbnb) "
