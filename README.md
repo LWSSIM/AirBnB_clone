@@ -43,6 +43,11 @@ This also is a guide to various aspects of Python development, covering topics s
 
 ---
 
+## FrameWork
+![image](https://github.com/LWSSIM/AirBnB_clone/assets/127129101/7071e2e7-567e-41f5-ba46-d305af01c31b)
+
+---
+
 ## Files and Dirs
 
 - `models` directory will contain all classes used for the entire project. A class, called “model” in a OOP project is the representation of an object/instance.
@@ -51,12 +56,57 @@ This also is a guide to various aspects of Python development, covering topics s
 - `models/base_model.py` file is the base class of all our models. It contains common elements:
     - *attributes*: ``id``, ``created_at`` and ``updated_at``
     - *methods*: ``save()`` and ``to_json()``
+- `models/*.py` other classes module.:
 - `models/engine` directory will contain all storage classes (using the same prototype). For the moment will have only one: `file_storage.py`.
 
 ---
 
-## Usage
+## DataModel
+![image](https://github.com/LWSSIM/AirBnB_clone/assets/127129101/48eb723b-3769-4438-a8ba-e5b8d7a1d048)
 
+---
+
+## Usage
+Try it yourself!
+
+1- `git clone https://github.com/LWSSIM/AirBnB_clone/`
+
+2- `cd AirBnB_clone`
+
+3- `./console`
+
+```Shell
+$
+Welcome to the AirBnB CLI tool.
+    ---Type help or ? to list commands.
+
+(hbnb)
+```
+- The CLI supports many commands to manipulate objects plus allow for easy interaction with the storage engine (a .json file);
+
+**Discover all the available commands and their usage with `help` or `?`:**
+```Shell
+(hbnb) help
+
+Documented commands (type help <topic>):
+****************************************
+EOF  all  clear  count  create  destroy  help  quit  show  update
+
+Miscellaneous help topics:
+**************************
+precmd
+
+(hbnb) ? all
+
+[Usage]: all [<className>]
+
+Prints all instances string representations
+Ex: $ all BaseModel or $ all
+
+Sformat:
+        <ClassName>.all()
+(hbnb)
+```
 ---
 
 # Python Development Guide
