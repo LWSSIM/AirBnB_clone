@@ -14,6 +14,7 @@ from models.user import User
 from models import storage
 import os
 import re
+import json
 
 
 class HBNBCommand(cmd.Cmd):
@@ -26,14 +27,14 @@ class HBNBCommand(cmd.Cmd):
     """
     ruler = "*"
     prompt = "(hbnb) "
-    classes = {"BaseModel": BaseModel,
-               "User": User,
-               "Amenity": Amenity,
-               "City": City,
-               "Review": Review,
-               "State": State,
-               "Place": Place
-               }
+    models = {"BaseModel": BaseModel,
+              "User": User,
+              "Amenity": Amenity,
+              "City": City,
+              "Review": Review,
+              "State": State,
+              "Place": Place
+              }
 
     def emptyline(self):
         """Ignore emptyline inputs
@@ -68,12 +69,11 @@ class HBNBCommand(cmd.Cmd):
         l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if not l_match:
             return line
+
         else:
             l_match = list(l_match.groups())
             _cmd, _cls, _args = l_match[1], l_match[0], l_match[2]
 
-            # if l_match[1] == "count":
-            #   return f"{_cmd} {_cls}"
             if (
                 len(l_match) <= 3 and
                 len(l_match) > 1 and
@@ -82,12 +82,25 @@ class HBNBCommand(cmd.Cmd):
             ):
                 return f"{_cmd} {_cls} {_args}"
             else:
+                d_match = re.search(r'{(.+)}', line)
                 _args = _args.replace(",", "")
                 _args = _args.split(" ")
-                return (
-                    f"{_cmd} {_cls} {_args[0][1:-1]} "
-                    f"{_args[1][1:-1]} {_args[2]}"
-                )
+                _id = _args[0][1:-1]
+                if not d_match:
+                    return (
+                        f"{_cmd} {_cls} {_id} "
+                        f"{_args[1][1:-1]} {_args[2]}"
+                    )
+                else:
+                    d_args = "{" + d_match.group(1).replace("'", '"') + "}"
+                    d_args = json.loads(d_args)
+
+                    for i in d_args:
+                        d_line = (
+                            f"{_cmd} {_cls} {_id} {i} \"{d_args[i]}\""
+                        )
+                        self.onecmd(d_line)
+                    return ""
 
     def help_precmd(self):
         print("""\n***Special command Sformat support:
@@ -113,11 +126,11 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args not in self.classes:
+        elif args not in self.models:
             print("** class doesn't exist **")
             return
 
-        new_inst = self.classes[args]()
+        new_inst = self.models[args]()
         new_inst.save()
         print(new_inst.id)
 
@@ -140,7 +153,7 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif name not in self.classes:
+        elif name not in self.models:
             print("** class doesn't exist **")
             return
         elif not id:
@@ -174,7 +187,7 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif name not in self.classes:
+        elif name not in self.models:
             print("** class doesn't exist **")
             return
         elif not id:
@@ -204,7 +217,7 @@ class HBNBCommand(cmd.Cmd):
         str_rep = []
         if args:
             args = args.split(' ')[0]
-            if args not in self.classes:
+            if args not in self.models:
                 print("** class doesn't exist **")
                 return
             for key, val in storage._FileStorage__objects.items():
@@ -228,7 +241,7 @@ class HBNBCommand(cmd.Cmd):
             Ex:
                 <class name>.count()
         """
-        if line not in self.classes:
+        if line not in self.models:
             print("** class doesn't exist **")
             return
 
@@ -254,7 +267,7 @@ class HBNBCommand(cmd.Cmd):
         if not args[0]:
             print("** class name missing **")
             return
-        if args[0] not in self.classes:
+        if args[0] not in self.models:
             print("** class doesn't exist **")
             return
         elif len(args) >= 1:
@@ -272,7 +285,11 @@ class HBNBCommand(cmd.Cmd):
                     session = storage.all()
                     key = f"{args[0]}.{args[1]}"
                     name = args[2]
-                    value_str = args[3][1:-1]
+                    if args[3][0] == "\"" and args[3][-1] == "\"":
+                        value_str = args[3][1:-1]
+                    else:
+                        value_str = args[3]
+
                     if re.match(r"^\d+$", value_str):
                         value = int(value_str)
                     elif re.match(r"^\d+\.\d+$", value_str):

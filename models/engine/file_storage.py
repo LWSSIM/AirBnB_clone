@@ -64,6 +64,7 @@ class FileStorage:
         try:
             with open(self.__file_path, "r") as f:
                 objs = json.load(f)
+
             for key, value in objs.items():
                 class_name = key.split(".")[0]
                 class_obj = globals().get(class_name)
@@ -72,3 +73,5 @@ class FileStorage:
                     self.new(instance)
         except FileNotFoundError:
             pass
+        except Exception as e:
+            print(f"Error reloading data: {e}")
