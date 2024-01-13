@@ -198,22 +198,17 @@ For more information, refer to the [unittest documentation](https://docs.python.
 
 ## Serialization and Deserialization of Classes
 
-To serialize and deserialize a class in Python, use the `pickle` module:
+1- Generate a dictionary representation of an instance
 
-```python
-import pickle
+2- Re-create an instance from another one by using a dictionary representation
 
-# Serialize
-obj = MyClass()
-with open('serialized_object.pkl', 'wb') as file:
-    pickle.dump(obj, file)
+  `<class 'BaseModel'> -> to_dict() -> <class 'dict'> -> <class 'BaseModel'>`
 
-# Deserialize
-with open('serialized_object.pkl', 'rb') as file:
-    loaded_obj = pickle.load(file)
-  ```
+3-We can then convert a self.__dict__ dictionary to a string and `store` it in JSON an then `load` it after: 
 
-Ensure that the class being serialized is defined in the code before deserialization, and exercise caution when loading data from untrusted sources.
+  `<class 'BaseModel'> -> to_dict() -> <class 'dict'> -> JSON dump -> <class 'str'> -> FILE -> <class 'str'> -> JSON load -> <class 'dict'> -> <class 'BaseModel'>`
+
+`FILE` can become a `DataBase` with a future storage engine update.
 
 ---
 
@@ -236,7 +231,7 @@ with open('data.json', 'r') as json_file:
 print(loaded_data)
 ```
 
-Ensure that the data being written to JSON is serializable, and handle exceptions when loading JSON from external sources.
+Ensure that the data being written to JSON is serializable, and handle exceptions.
 
 ---
 
