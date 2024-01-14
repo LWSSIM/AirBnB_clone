@@ -13,6 +13,7 @@ from models.state import State
 from models.user import User
 from models import storage
 import os
+import shlex
 import re
 import json
 
@@ -66,6 +67,7 @@ class HBNBCommand(cmd.Cmd):
         Fomrat:
             <cls>.<cmd>(<potential args>)
         """
+        line = line.lstrip()
         l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if not l_match:
             return line
@@ -80,21 +82,35 @@ class HBNBCommand(cmd.Cmd):
                 type(_args) is str and
                 _cmd != "update"
             ):
-                return f"{_cmd} {_cls} {_args}"
+                if _cmd != "count":
+                    if _args:
+                        if _args[0] == "\"" and _args[-1] == "\"":
+                            _id = _args[1:-1]
+                        else:
+                            _id = _args
+                    else:
+                        _id = _args
+                    return f"{_cmd} {_cls} {_id}"
+                else:
+                    self.count(_cls)
+                    return ""
+
             else:
                 d_match = re.search(r'{(.+)}', line)
                 _args = _args.replace(",", "")
-                _args = _args.split(" ")
-                _id = _args[0][1:-1]
+                _args = shlex.split(_args)
+                _id = _args[0]
+
                 if not d_match:
                     return (
                         f"{_cmd} {_cls} {_id} "
-                        f"{_args[1][1:-1]} {_args[2]}"
+                        f"{_args[1]} {_args[2]}"
                     )
                 else:
                     d_args = "{" + d_match.group(1).replace("'", '"') + "}"
                     d_args = json.loads(d_args)
 
+                    print(_id)
                     for i in d_args:
                         d_line = (
                             f"{_cmd} {_cls} {_id} {i} \"{d_args[i]}\""
@@ -236,7 +252,7 @@ class HBNBCommand(cmd.Cmd):
         print("""Sformat:
         <class name>.all()""")
 
-    def do_count(self, line):
+    def count(self, line):
         """retrieve the number of instances of a class
             Ex:
                 <class name>.count()
@@ -263,8 +279,8 @@ class HBNBCommand(cmd.Cmd):
             (save the change into the JSON file).
                 Ex: $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
-        args = line.split(" ")
-        if not args[0]:
+        args = shlex.split(line)
+        if not args:
             print("** class name missing **")
             return
         if args[0] not in self.models:
