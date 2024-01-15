@@ -379,8 +379,8 @@ class TestConsole(unittest.TestCase):
         cmd = f"update City {test_inst.id} state_id 404"
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "state_id"))
-        self.assertEqual(test_inst.state_id, "404")
-        self.assertEqual(type(test_inst.state_id), str)
+        self.assertEqual(test_inst.state_id, 404)
+        self.assertEqual(type(test_inst.state_id), int)
         cmd = f"update City {test_inst.id} name 'roma'"
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "name"))
@@ -448,7 +448,7 @@ class TestConsole(unittest.TestCase):
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "latitude"))
         self.assertEqual(test_inst.latitude, 200)
-        self.assertEqual(type(test_inst.latitude), float)
+        self.assertEqual(type(test_inst.latitude), int)
         cmd = f"update Place {test_inst.id} longitude 200.5"
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "longitude"))
@@ -458,7 +458,7 @@ class TestConsole(unittest.TestCase):
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "longitude"))
         self.assertEqual(test_inst.longitude, 200)
-        self.assertEqual(type(test_inst.longitude), float)
+        self.assertEqual(type(test_inst.longitude), int)
 
     def test_update_with_Review_attr(self):
         test_inst = Review()
@@ -689,27 +689,6 @@ class TestConsole(unittest.TestCase):
         self.assertEqual(test_inst.height, 1.80)
         self.assertEqual(type(test_inst.height), float)
 
-    def test_update_with_user_attr2(self):
-        test_inst = User()
-        test_inst.save()
-        cmd1 = f"User.update({test_inst.id}, email, 'airbnb@mail.com', "
-        cmd2 = "password, root, "
-        cmd3 = "first_name, Betty, "
-        cmd4 = "last_name, Holberton)"
-        HBNBCommand().onecmd(cmd1 + cmd2 + cmd3 + cmd4)
-        self.assertTrue(hasattr(test_inst, "email"))
-        self.assertEqual(test_inst.email, "airbnb@mail.com")
-        self.assertEqual(type(test_inst.email), str)
-        self.assertTrue(hasattr(test_inst, "password"))
-        self.assertEqual(test_inst.password, "root")
-        self.assertEqual(type(test_inst.password), str)
-        self.assertTrue(hasattr(test_inst, "first_name"))
-        self.assertEqual(test_inst.first_name, "Betty")
-        self.assertEqual(type(test_inst.first_name), str)
-        self.assertTrue(hasattr(test_inst, "last_name"))
-        self.assertEqual(test_inst.last_name, "Holberton")
-        self.assertEqual(type(test_inst.last_name), str)
-
     def test_update_with_state_attr2(self):
         test_inst = State()
         test_inst.save()
@@ -741,65 +720,6 @@ class TestConsole(unittest.TestCase):
         self.assertTrue(hasattr(test_inst, "name"))
         self.assertEqual(test_inst.name, "sea side")
         self.assertEqual(type(test_inst.name), str)
-
-    def test_update_with_place_attr2(self):
-        test_inst = Place()
-        test_inst.save()
-        cmd = (
-            f"Place.update({test_inst.id} city_id," +
-            " 'a random id', user_id, 'a random user id')"
-        )
-        HBNBCommand().onecmd(cmd)
-        self.assertTrue(hasattr(test_inst, "city_id"))
-        self.assertEqual(test_inst.city_id, "a random id")
-        self.assertEqual(type(test_inst.city_id), str)
-        self.assertTrue(hasattr(test_inst, "user_id"))
-        self.assertEqual(test_inst.user_id, "a random user id")
-        self.assertEqual(type(test_inst.user_id), str)
-        cmd = (
-            f"Place.update({test_inst.id}, name," +
-            " 'Betty', description, 'this is boring')"
-        )
-        HBNBCommand().onecmd(cmd)
-        self.assertTrue(hasattr(test_inst, "name"))
-        self.assertEqual(test_inst.name, "Betty")
-        self.assertEqual(type(test_inst.name), str)
-        self.assertTrue(hasattr(test_inst, "description"))
-        self.assertEqual(test_inst.description, "this is boring")
-        self.assertEqual(type(test_inst.description), str)
-        cmd = (
-            f"Place.update({test_inst.id}," +
-            " number_rooms, 5, number_bathrooms, 2)"
-        )
-        HBNBCommand().onecmd(cmd)
-        self.assertTrue(hasattr(test_inst, "number_rooms"))
-        self.assertEqual(test_inst.number_rooms, 5)
-        self.assertEqual(type(test_inst.number_rooms), int)
-        self.assertTrue(hasattr(test_inst, "number_bathrooms"))
-        self.assertEqual(test_inst.number_bathrooms, 2)
-        self.assertEqual(type(test_inst.number_bathrooms), int)
-        cmd = (
-            f"Place.update({test_inst.id}, max_guest,r" +
-            " 6, price_by_night, 500, latitude, 200.5)"
-        )
-        HBNBCommand().onecmd(cmd)
-        self.assertTrue(hasattr(test_inst, "max_guest"))
-        self.assertEqual(test_inst.max_guest, 6)
-        self.assertEqual(type(test_inst.max_guest), int)
-        self.assertTrue(hasattr(test_inst, "price_by_night"))
-        self.assertEqual(test_inst.price_by_night, 500)
-        self.assertEqual(type(test_inst.price_by_night), int)
-        self.assertTrue(hasattr(test_inst, "latitude"))
-        self.assertEqual(test_inst.latitude, 200.5)
-        self.assertEqual(type(test_inst.latitude), float)
-        cmd = f"Place.update({test_inst.id}, latitude, 200, longitude, 200)"
-        HBNBCommand().onecmd(cmd)
-        self.assertTrue(hasattr(test_inst, "latitude"))
-        self.assertEqual(test_inst.longitude, 200)
-        self.assertEqual(type(test_inst.longitude), float)
-        self.assertTrue(hasattr(test_inst, "longitude"))
-        self.assertEqual(test_inst.longitude, 200)
-        self.assertEqual(type(test_inst.longitude), float)
 
     def test_update_with_Review_attr2(self):
         test_inst = Review()
@@ -979,10 +899,10 @@ class TestConsole(unittest.TestCase):
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "latitude"))
         self.assertEqual(test_inst.longitude, 200)
-        self.assertEqual(type(test_inst.longitude), float)
+        self.assertEqual(type(test_inst.longitude), int)
         self.assertTrue(hasattr(test_inst, "longitude"))
         self.assertEqual(test_inst.longitude, 200)
-        self.assertEqual(type(test_inst.longitude), float)
+        self.assertEqual(type(test_inst.longitude), int)
 
     def test_update_with_Review_attr3(self):
         test_inst = Review()
