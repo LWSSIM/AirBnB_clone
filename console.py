@@ -180,8 +180,7 @@ class HBNBCommand(cmd.Cmd):
         session = storage.all()
         key = f"{name}.{id}"
         try:
-            print()
-            print(session[key], end='\n\n')
+            print(session[key])
         except KeyError:
             print("** no instance found **")
 
@@ -243,8 +242,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             for key, val in storage._FileStorage__objects.items():
                 str_rep.append(str(val))
-        print()
-        print(str_rep, end='\n\n')
+        print(str_rep)
 
     def help_all(self):
         print("\n[Usage]: all [<className>]\n")
