@@ -745,7 +745,10 @@ class TestConsole(unittest.TestCase):
     def test_update_with_place_attr2(self):
         test_inst = Place()
         test_inst.save()
-        cmd = f"Place.update({test_inst.id} city_id, 'a random id', user_id, 'a random user id')"
+        cmd = (
+            f"Place.update({test_inst.id} city_id," +
+            " 'a random id', user_id, 'a random user id')"
+        )
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "city_id"))
         self.assertEqual(test_inst.city_id, "a random id")
@@ -753,7 +756,10 @@ class TestConsole(unittest.TestCase):
         self.assertTrue(hasattr(test_inst, "user_id"))
         self.assertEqual(test_inst.user_id, "a random user id")
         self.assertEqual(type(test_inst.user_id), str)
-        cmd = f"Place.update({test_inst.id}, name, 'Betty', description, 'this is boring')"
+        cmd = (
+            f"Place.update({test_inst.id}, name," +
+            " 'Betty', description, 'this is boring')"
+        )
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "name"))
         self.assertEqual(test_inst.name, "Betty")
@@ -761,7 +767,10 @@ class TestConsole(unittest.TestCase):
         self.assertTrue(hasattr(test_inst, "description"))
         self.assertEqual(test_inst.description, "this is boring")
         self.assertEqual(type(test_inst.description), str)
-        cmd = f"Place.update({test_inst.id}, number_rooms, 5, number_bathrooms, 2)"
+        cmd = (
+            f"Place.update({test_inst.id}," +
+            " number_rooms, 5, number_bathrooms, 2)"
+        )
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "number_rooms"))
         self.assertEqual(test_inst.number_rooms, 5)
@@ -769,7 +778,10 @@ class TestConsole(unittest.TestCase):
         self.assertTrue(hasattr(test_inst, "number_bathrooms"))
         self.assertEqual(test_inst.number_bathrooms, 2)
         self.assertEqual(type(test_inst.number_bathrooms), int)
-        cmd = f"Place.update({test_inst.id}, max_guest, 6, price_by_night, 500, latitude, 200.5)"
+        cmd = (
+            f"Place.update({test_inst.id}, max_guest,r" +
+            " 6, price_by_night, 500, latitude, 200.5)"
+        )
         HBNBCommand().onecmd(cmd)
         self.assertTrue(hasattr(test_inst, "max_guest"))
         self.assertEqual(test_inst.max_guest, 6)
