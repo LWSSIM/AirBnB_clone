@@ -60,7 +60,7 @@ class HBNBCommand(cmd.Cmd):
         print("\nType 'quit' to exit")
         print("---You can also press <C-d>\n")
 
-    def precmd(self, line):
+    def default(self, line):
         """(precmd)
         special commands format support:
 
@@ -70,11 +70,15 @@ class HBNBCommand(cmd.Cmd):
         line = line.lstrip()
         l_match = re.match(r"^(\w+)\.(\w+)\((.*)\)", line)
         if not l_match:
-            return line
+            super().default(line)
 
         else:
             l_match = list(l_match.groups())
             _cmd, _cls, _args = l_match[1], l_match[0], l_match[2]
+            l_cmd = {"all": self.do_all,
+                     "show": self.do_show,
+                     "count": self.count,
+                     "destroy": self.do_destroy}
 
             if (
                 len(l_match) <= 3 and
@@ -82,41 +86,42 @@ class HBNBCommand(cmd.Cmd):
                 type(_args) is str and
                 _cmd != "update"
             ):
-                if _cmd != "count":
-                    if _args:
-                        if _args[0] == "\"" and _args[-1] == "\"":
-                            _id = _args[1:-1]
-                        else:
-                            _id = _args
+                if _args:
+                    if _args[0] == "\"" and _args[-1] == "\"":
+                        _id = _args[1:-1]
                     else:
                         _id = _args
-                    return f"{_cmd} {_cls} {_id}"
                 else:
-                    self.count(_cls)
-                    return ""
+                    _id = _args
+
+                n_line = f"{_cls} {_id}"
+                if _cmd == "count":
+                    l_cmd[_cmd](_cls)
+                else:
+                    try:
+                        l_cmd[_cmd](n_line)
+                    except KeyError:
+                        pass
 
             else:
                 d_match = re.search(r'{(.+)}', line)
                 _args = _args.replace(",", "")
-                _args = shlex.split(_args)
-                _id = _args[0]
+                _id = shlex.split(_args)[0]
 
                 if not d_match:
-                    return (
-                        f"{_cmd} {_cls} {_id} "
-                        f"{_args[1]} {_args[2]}"
+                    n_line = (
+                        f"{_cls} {_args}"
                     )
-                else:
+                    self.do_update(n_line)
+                elif d_match:
                     d_args = "{" + d_match.group(1).replace("'", '"') + "}"
                     d_args = json.loads(d_args)
 
-                    print(_id)
                     for i in d_args:
-                        d_line = (
-                            f"{_cmd} {_cls} {_id} {i} \"{d_args[i]}\""
+                        n_line = (
+                            f"{_cls} {_id} {i} \"{d_args[i]}\""
                         )
-                        self.onecmd(d_line)
-                    return ""
+                        self.do_update(n_line)
 
     def help_precmd(self):
         print("""\n***Special command Sformat support:
@@ -301,10 +306,7 @@ class HBNBCommand(cmd.Cmd):
                     session = storage.all()
                     key = f"{args[0]}.{args[1]}"
                     name = args[2]
-                    if args[3][0] == "\"" and args[3][-1] == "\"":
-                        value_str = args[3][1:-1]
-                    else:
-                        value_str = args[3]
+                    value_str = args[3]
 
                     if re.match(r"^\d+$", value_str):
                         value = int(value_str)
@@ -312,6 +314,7 @@ class HBNBCommand(cmd.Cmd):
                         value = float(value_str)
                     else:
                         value = value_str
+
                     setattr(session[key], name, value)
                     storage.save()
 
