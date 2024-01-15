@@ -824,7 +824,7 @@ class TestConsole(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as f:
             HBNBCommand().onecmd("BaseModel.update(121212)")
             output = f.getvalue().strip()
-            self.assertEqual(output, "** no instance found **")
+            self.assertEqual(output, "** attribute name missing **")
 
     def test_update_with_missing_attribute_name2(self):
         test_inst = User()

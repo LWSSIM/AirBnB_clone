@@ -23,10 +23,6 @@ class HBNBCommand(cmd.Cmd):
     Operates on objects-storage_system via console,
         supports interactive and non-inter modes.
     """
-    intro = """Welcome to the AirBnB CLI tool.
-    ---Type help or ? to list commands.
-    """
-    ruler = "*"
     prompt = "(hbnb) "
     models = {"BaseModel": BaseModel,
               "User": User,
@@ -123,7 +119,7 @@ class HBNBCommand(cmd.Cmd):
                         )
                         self.do_update(n_line)
 
-    def help_precmd(self):
+    def help_default(self):
         print("""\n***Special command Sformat support:
         Format:
             <cls>.<cmd>(<potential args>)
